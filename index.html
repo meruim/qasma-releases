@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QASMA - Download</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+            padding-top: 40px;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+        }
+
+        .latest-version {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+        }
+
+        .version-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 18px 40px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            margin: 20px 0;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .download-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .release-info {
+            color: #666;
+            font-size: 0.95rem;
+            margin-top: 15px;
+        }
+
+        .changelog {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .changelog h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .changelog-content {
+            color: #555;
+            line-height: 1.6;
+            white-space: pre-line;
+        }
+
+        .older-versions {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .older-versions h2 {
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+        }
+
+        .version-item {
+            border-bottom: 1px solid #eee;
+            padding: 20px 0;
+        }
+
+        .version-item:last-child {
+            border-bottom: none;
+        }
+
+        .version-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .version-number {
+            font-weight: 600;
+            color: #667eea;
+            font-size: 1.1rem;
+        }
+
+        .version-date {
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        .small-download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .small-download-btn:hover {
+            background: #764ba2;
+        }
+
+        .small-download-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .android-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            display: block;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+
+            .latest-version, .older-versions {
+                padding: 25px;
+            }
+
+            .download-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <svg class="android-icon" viewBox="0 0 24 24" fill="white">
+                <path d="M17.6,9.48l1.84-3.18c0.16-0.31,0.04-0.69-0.26-0.85c-0.29-0.15-0.65-0.06-0.83,0.22l-1.88,3.24 c-2.86-1.21-6.08-1.21-8.94,0L5.65,5.67c-0.19-0.29-0.58-0.38-0.87-0.2C4.5,5.65,4.41,6.01,4.56,6.3L6.4,9.48 C3.3,11.25,1.28,14.44,1,18h22C22.72,14.44,20.7,11.25,17.6,9.48z M7,15.25c-0.69,0-1.25-0.56-1.25-1.25 c0-0.69,0.56-1.25,1.25-1.25S8.25,13.31,8.25,14C8.25,14.69,7.69,15.25,7,15.25z M17,15.25c-0.69,0-1.25-0.56-1.25-1.25 c0-0.69,0.56-1.25,1.25-1.25s1.25,0.56,1.25,1.25C18.25,14.69,17.69,15.25,17,15.25z"/>
+            </svg>
+            <h1>QASMA</h1>
+            <p>Download for Android</p>
+        </div>
+
+        <div id="loading" class="loading">
+            Loading releases...
+        </div>
+
+        <div id="content" style="display: none;">
+            <div id="latest-release"></div>
+            <div id="older-releases"></div>
+        </div>
+    </div>
+
+    <script>
+        const GITHUB_USERNAME = 'meruim';
+        const GITHUB_REPO = 'qasma-releases';
+        const API_URL = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/releases`;
+
+        async function fetchReleases() {
+            try {
+                const response = await fetch(API_URL);
+                
+                if (!response.ok) {
+                    throw new Error(`GitHub API returned ${response.status}`);
+                }
+                
+                const releases = await response.json();
+                
+                if (releases.length === 0) {
+                    showError('No releases found. Please upload your first release to GitHub.');
+                    return;
+                }
+                
+                displayReleases(releases);
+            } catch (error) {
+                console.error('Error fetching releases:', error);
+                showError('Unable to load releases. Please check if the repository exists and has releases.');
+            }
+        }
+
+        function displayReleases(releases) {
+            const latest = releases[0];
+            const older = releases.slice(1);
+
+            document.getElementById('latest-release').innerHTML = createLatestReleaseHTML(latest);
+            
+            if (older.length > 0) {
+                document.getElementById('older-releases').innerHTML = createOlderReleasesHTML(older);
+            }
+
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('content').style.display = 'block';
+        }
+
+        function createLatestReleaseHTML(release) {
+            const apkAsset = release.assets.find(asset => 
+                asset.name.toLowerCase().endsWith('.apk')
+            );
+
+            const downloadUrl = apkAsset ? apkAsset.browser_download_url : '#';
+            const fileName = apkAsset ? apkAsset.name : 'QASMA.apk';
+            const fileSize = apkAsset ? formatBytes(apkAsset.size) : '';
+            const downloadCount = apkAsset ? apkAsset.download_count : 0;
+
+            return `
+                <div class="latest-version">
+                    <span class="version-badge">LATEST VERSION</span>
+                    <h2 style="font-size: 2rem; margin-bottom: 10px; color: #333;">${release.name || release.tag_name}</h2>
+                    <a href="${downloadUrl}" class="download-btn" ${!apkAsset ? 'style="opacity: 0.5; pointer-events: none;"' : ''}>
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                        </svg>
+                        Download ${fileName}
+                    </a>
+                    <div class="release-info">
+                        📅 Released: ${new Date(release.published_at).toLocaleDateString('en-US', { 
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric' 
+                        })}
+                        ${fileSize ? ` • 📦 Size: ${fileSize}` : ''}
+                        ${downloadCount > 0 ? ` • ⬇️ Downloads: ${downloadCount}` : ''}
+                    </div>
+                    ${release.body ? `
+                        <div class="changelog">
+                            <h3>📝 What's New</h3>
+                            <div class="changelog-content">${release.body}</div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        function createOlderReleasesHTML(releases) {
+            const items = releases.map(release => {
+                const apkAsset = release.assets.find(asset => 
+                    asset.name.toLowerCase().endsWith('.apk')
+                );
+                const downloadUrl = apkAsset ? apkAsset.browser_download_url : '#';
+                const fileSize = apkAsset ? formatBytes(apkAsset.size) : '';
+
+                return `
+                    <div class="version-item">
+                        <div class="version-header">
+                            <div>
+                                <div class="version-number">${release.name || release.tag_name}</div>
+                                <div class="version-date">${new Date(release.published_at).toLocaleDateString()}</div>
+                            </div>
+                            <a href="${downloadUrl}" class="small-download-btn" ${!apkAsset ? 'style="opacity: 0.5; pointer-events: none;"' : ''}>
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                                </svg>
+                                Download ${fileSize ? `(${fileSize})` : ''}
+                            </a>
+                        </div>
+                        ${release.body ? `<div class="changelog-content" style="margin-top: 10px; color: #666; font-size: 0.9rem;">${release.body}</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            return `
+                <div class="older-versions">
+                    <h2>📦 Previous Versions</h2>
+                    ${items}
+                </div>
+            `;
+        }
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        function showError(message) {
+            document.getElementById('loading').innerHTML = `
+                <div class="error">
+                    ⚠️ ${message}
+                </div>
+            `;
+        }
+
+        fetchReleases();
+    </script>
+</body>
+</html>
